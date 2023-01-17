@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.AfibDetection">
+
+    <com.otaliastudios.cameraview.CameraView
+        android:id="@+id/view_camera"
+        Of="parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="250dp"
+        android:keepScreenOn="true"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btn_start_measurement">
+
+    </com.otaliastudios.cameraview.CameraView>
+
+    <Button
+        android:id="@+id/log"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Open Log Folder"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btn_start_measurement"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:background="@color/transparent"
+        android:contentDescription="@string/btn_fingerprint"
+        android:src="@drawable/ic_fingerprint"
+
+        app:layout_constraintBottom_toTopOf="@+id/log"
+        app:layout_constraintEnd_toEndOf="@id/log"
+        app:layout_constraintStart_toStartOf="@id/log" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="2"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/text_heart_rate"
+            android:gravity="right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_150dp"
+            android:text="@string/label_default_heart_rate"
+            android:textColor="@color/primaryGreen"
+            android:layout_weight="0.6"
+            android:textSize="80sp" />
+
+        <TextView
+            android:id="@+id/text_heart_rate3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:layout_marginTop="@dimen/margin_150dp"
+            android:layout_weight="0.5"
+            android:text="@string/label_default_heart_rate_bpm"
+            android:textColor="@color/primaryGreen"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutPrediction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="2"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/img_heart"
+        app:layout_constraintStart_toStartOf="@+id/img_heart">
+
+        <TextView
+            android:id="@+id/text_prediction_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/label_default_prediction_header"
+            android:textColor="@color/primaryGreen"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+        <TextView
+            android:id="@+id/text_prediction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/label_default_prediction"
+            android:textColor="@color/primaryGreen"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/img_heart"
+        android:layout_marginTop="@dimen/margin_30dp"
+        android:contentDescription="@string/description_image_heart"
+        android:src="@drawable/image_hd"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+    <TextView
+        android:id="@+id/text_guide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_default_guide"
+        android:textColor="@color/primaryGrey"
+        android:textSize="12sp"
+        android:layout_marginBottom="10sp"
+        app:layout_constraintBottom_toTopOf="@+id/log"
+        app:layout_constraintEnd_toEndOf="@id/log"
+        app:layout_constraintStart_toStartOf="@id/log"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

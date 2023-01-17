@@ -1,0 +1,47 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 31
+    buildToolsVersion "30.0.2"
+
+    defaultConfig {
+        applicationId "com.uni.ppg"
+        minSdkVersion 28
+        targetSdkVersion 31
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+}
+
+
+dependencies {
+    implementation "androidx.appcompat:appcompat:$appCompatVersion"
+    implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
+    implementation "com.google.android.material:material:$materialVersion"
+    implementation "androidx.fragment:fragment"
+    implementation group: 'com.google.guava', name: 'guava', version: guavaVersion
+    implementation group: 'uk.me.berndporr', name: 'iirj', version: iirjVersion
+    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
+    implementation 'com.amitshekhar.android:jackson-android-networking:1.0.2'
+    implementation 'com.amitshekhar.android:android-networking:1.0.2'
+    api "com.otaliastudios:cameraview:$cameraViewVersion"
+    implementation "org.slf4j:slf4j-simple:1.6.1"
+    implementation files('libs\\poi-3.7.jar')
+    testImplementation "org.assertj:assertj-core:$assertJVersion"
+    testImplementation "junit:junit:$junitVersion"
+
+    androidTestImplementation "androidx.test.ext:junit:$androidTestJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
+}
