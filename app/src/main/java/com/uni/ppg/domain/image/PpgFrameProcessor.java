@@ -65,6 +65,7 @@ public class PpgFrameProcessor implements FrameProcessor {
     // override "process" function from cameraview package
     public void process(@NonNull Frame frame) {
         Size size = frame.getSize();
+//        Log.i( "Batch size achieved", String.valueOf(size.getWidth()) + String.valueOf(size.getHeight()));
         int redSum = yuvToRedSum(frame.getData(), size.getWidth(), size.getHeight());
         signal[frameCounter] = redSum; // append redSum to signal array
         time[frameCounter] = frame.getTime();// append frame time to time array

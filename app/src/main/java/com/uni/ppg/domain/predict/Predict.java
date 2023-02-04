@@ -12,6 +12,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -22,15 +26,19 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.lang.Math;
+import java.util.HashMap;
 import java.util.Objects;
 
+import org.apache.commons.math3.stat.descriptive.moment.Kurtosis;
+import org.apache.commons.math3.stat.descriptive.moment.Skewness;
+import org.apache.commons.math3.stat.descriptive.moment.GeometricMean;
+import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.jacksonandroidnetworking.JacksonParserFactory;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Workbook;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -61,6 +69,92 @@ public class Predict {
         } else
             Log.d(TAG, str);
     }
+
+    public static double findMedian(double[] arr) {
+        Arrays.sort(arr);
+        int n = arr.length;
+        if (n % 2 == 0) {
+            return (double)(arr[n/2] + arr[n/2 - 1]) / 2;
+        } else {
+            return (double) arr[n/2];
+        }
+    }
+
+    public static double findMode(double[] arr) {
+        HashMap<Double  , Integer> map = new HashMap<>();
+        for (double i : arr) {
+            if (map.containsKey(i)) {
+                map.put(i, map.get(i) + 1);
+            } else {
+                map.put(i, 1);
+            }
+        }
+        int maxCount = 0;
+        double mode = arr[0];
+        for (double i : map.keySet()) {
+            if (map.get(i) > maxCount) {
+                maxCount = map.get(i);
+                mode = i;
+            }
+        }
+        return mode;
+    }
+
+    public static double findVariance(double[] arr) {
+        int n = arr.length;
+        int sum = 0;
+        for (double i : arr) {
+            sum += i;
+        }
+        double mean = (double) sum / n;
+        double variance = 0;
+        for (double i : arr) {
+            variance += (i - mean) * (i - mean);
+        }
+        variance = variance / n;
+        return variance;
+    }
+
+    public static double[] calculateProbabilities(double[] listValues) {
+        Map<Double, Integer> counterValues = new HashMap<>();
+        for (double value : listValues) {
+            counterValues.put(value, counterValues.getOrDefault(value, 0) + 1);
+        }
+        double[] probabilities = new double[counterValues.size()];
+        int i = 0;
+        for (Map.Entry<Double, Integer> entry : counterValues.entrySet()) {
+            probabilities[i++] = (double) entry.getValue() / listValues.length;
+        }
+        return probabilities;
+    }
+
+    public static double findEntropy(double[] arr) {
+        double entropy = 0.0;
+        for (double value : arr) {
+            entropy -= value * Math.log(value) / Math.log(2);
+        }
+        return entropy;
+    }
+
+    public static double findRMSSD(double[] arr) {
+        double ssd = 0;
+        for (int x = 0; x < arr.length - 1; x++) {
+            ssd = ssd + Math.pow((arr[x + 1] - arr[x]), 2);
+        }
+        return Math.sqrt((1.0 / (arr.length - 1)) * ssd);
+    }
+
+    public static double findPNN50(double[] arr) {
+        int nn50 = 0;
+        for (int x = 0; x < arr.length - 1; x++) {
+            if (arr[x + 1] - arr[x] > 50) {
+                nn50++;
+            }
+        }
+        double pnn50 = (double) nn50 / (arr.length - 1) * 100;
+        return pnn50;
+    }
+
     public void predict()  {
         Log.i(TAG, "catboostPredict");
 
@@ -85,27 +179,72 @@ public class Predict {
         Log.i(TAG, " HR - " + Arrays.toString(hrTimestamp));
 
         double[] feature =  new double[GlobalConstants.rriLength];
-        double[] finalFeature =  new double[GlobalConstants.rriLength + GlobalConstants.addedFeature];
-
+        double[] finalFeature =  new double[GlobalConstants.addedFeature];
 
         for (int i = 0; i < GlobalConstants.rriLength; i++){
             feature[i] = ppInterval[i]/4; // sampling rate is 250 (250 sample per second), timestamp is in ms, so need to be divided by 4
-            finalFeature[i] = ppInterval[i]/4;
         }
+
         Log.i(TAG, " feature length - " + feature.length);
-        Log.i(TAG, " feature base - " + feature.length);
+        Log.i(TAG, " feature - " + Arrays.toString(feature));
 
-
-        finalFeature[GlobalConstants.rriLength] = Arrays.stream(feature).max().getAsDouble();
+        finalFeature[0] = Arrays.stream(feature).max().getAsDouble();
         Log.i(TAG, " Feature - " + Arrays.toString(finalFeature));
 
-        finalFeature[GlobalConstants.rriLength + 1] = Arrays.stream(feature).min().getAsDouble();
+        finalFeature[1] = Arrays.stream(feature).min().getAsDouble();
         Log.i(TAG, " Feature - " + Arrays.toString(finalFeature));
 
-        finalFeature[GlobalConstants.rriLength + 2] = Arrays.stream(feature).average().getAsDouble();
+        finalFeature[2] = Arrays.stream(feature).average().getAsDouble();
         Log.i(TAG, " Feature - " + Arrays.toString(finalFeature));
 
-        finalFeature[GlobalConstants.rriLength + 3] = calculateStandardDeviation(feature);
+        StandardDeviation standarddev = new StandardDeviation();
+        double std = standarddev.evaluate(feature);
+
+        finalFeature[3] = std;
+        Log.i(TAG, " Feature - " + Arrays.toString(finalFeature));
+
+        finalFeature[4] = findMedian(feature);//median
+        Log.i(TAG, " Feature - " + Arrays.toString(finalFeature));
+
+        finalFeature[5] = findMode(feature);//modus
+        Log.i(TAG, " Feature - " + Arrays.toString(finalFeature));
+
+        finalFeature[6] = findVariance(feature);//varian
+        Log.i(TAG, " Feature - " + Arrays.toString(finalFeature));
+
+        finalFeature[7] = finalFeature[0]-finalFeature[1];//range
+        Log.i(TAG, " Feature - " + Arrays.toString(finalFeature));
+
+        Skewness skewness = new Skewness();
+        double s = skewness.evaluate(feature);
+
+        finalFeature[8] = s;//skew
+        Log.i(TAG, " Feature - " + Arrays.toString(finalFeature));
+
+        Kurtosis kurtosis = new Kurtosis();
+        double k = kurtosis.evaluate(feature);
+
+        finalFeature[9] = k;//kurt
+        Log.i(TAG, " Feature - " + Arrays.toString(finalFeature));
+
+        GeometricMean gmean = new GeometricMean();
+        double rms = gmean.evaluate(feature);
+        finalFeature[10] = rms;//rms
+        Log.i(TAG, " Feature - " + Arrays.toString(finalFeature));
+
+        double[] prob = calculateProbabilities(feature);
+        double entropy = findEntropy(prob);
+
+        finalFeature[11] = entropy;//entropy
+        Log.i(TAG, " Feature - " + Arrays.toString(finalFeature));
+
+        finalFeature[12] = findRMSSD(feature);//rmssd
+        Log.i(TAG, " Feature - " + Arrays.toString(finalFeature));
+
+        finalFeature[13] = (60*1000)/finalFeature[2];//mhr
+        Log.i(TAG, " Feature - " + Arrays.toString(finalFeature));
+
+        finalFeature[14] = findPNN50(feature);//pnn50
         Log.i(TAG, " Feature - " + Arrays.toString(finalFeature));
 
         hitPredictApi(finalFeature, this.unprocessedSignal);
@@ -138,13 +277,8 @@ public class Predict {
                                 PpgFrameProcessor.updateUIPredict("Atrial Fibrillation");
                             }else if (data.equals("1.0")){
                                 PpgFrameProcessor.updateUIPredict("Normal Sinus Rhythm");
-                            }else if (data.equals("2.0")){
-                                PpgFrameProcessor.updateUIPredict("Atrial Flutter");
-                            }else if (data.equals("3.0")){
-                                PpgFrameProcessor.updateUIPredict("AV junctional rhythm");}
-                            else {
-                                    PpgFrameProcessor.updateUIPredict("Prediction : -");
                             }
+
                         } catch (JSONException e) {
                             Log.i(TAG+"AndroidNetworking", "error : " + e);
                             PpgFrameProcessor.updateUIPredict(GlobalConstants.ERROR_MESSAGE);

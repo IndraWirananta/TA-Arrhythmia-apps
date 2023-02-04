@@ -5,10 +5,6 @@ import android.util.Log;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
-/**
- * This signal processing step converts reflected light information to
- * absorption.
- */
 public class Preprocessor implements Step {
 
     private static final String TAG = Preprocessor.class.getName();

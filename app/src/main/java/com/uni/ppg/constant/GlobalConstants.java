@@ -25,7 +25,7 @@ public class GlobalConstants {
     /**
      * The number of camera frames processed in one batch
      */
-    public static final int addedFeature = 4;
+    public static final int addedFeature = 15;
 
     /**
      * The number of camera frames processed in one batch

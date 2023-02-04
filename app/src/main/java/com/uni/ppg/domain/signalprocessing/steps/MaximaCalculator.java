@@ -5,11 +5,6 @@ import android.util.Log;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
-/**
- * This signal processing step takes the signal after calculating the derivative,
- * and identifies the indexes where the derivative curve has a value of zero.
- * Since the it is a series of discrete data, the first point before the zero is considered.
- */
 public class MaximaCalculator implements Step {
 
     private static final String TAG = MaximaCalculator.class.getName();
